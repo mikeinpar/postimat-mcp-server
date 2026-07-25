@@ -1,0 +1,34 @@
+# Brings up Postgres (auto-seeded) + the MCP server with one command:
+#   docker compose up --build
+# Then the server is on http://localhost:8000/mcp
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postimat
+      POSTGRES_PASSWORD: postimat
+      POSTGRES_DB: content_saas
+    # Files in this dir run alphabetically on FIRST boot: schema before seed.
+    volumes:
+      - ./schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./seed.sql:/docker-entrypoint-initdb.d/02-seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postimat -d content_saas"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  server:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      # Inside the compose network the DB host is the service name `db`.
+      DATABASE_URL: postgresql://postimat:postimat@db:5432/content_saas
+      MCP_BEARER_TOKEN: dev-secret-token
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: "8000"
+    ports:
+      - "8000:8000"
