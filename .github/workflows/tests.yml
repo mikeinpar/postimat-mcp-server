@@ -1,0 +1,50 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postimat
+          POSTGRES_PASSWORD: postimat
+          POSTGRES_DB: content_saas
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postimat -d content_saas"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://postimat:postimat@localhost:5432/content_saas
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Load schema and seed data
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f schema.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f seed.sql
+
+      - name: Run tests
+        run: pytest
