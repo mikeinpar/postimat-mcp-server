@@ -1,4 +1,4 @@
-"""Database access — a lazily-created asyncpg connection pool plus a tiny helper.
+"""Database access: a lazily-created asyncpg connection pool plus a tiny helper.
 
 Kept deliberately thin: the pool is created on first use and reused thereafter.
 Everything above this layer works with plain lists of dicts, never with the
@@ -33,7 +33,7 @@ async def fetch(query: str, *args: Any) -> list[dict]:
     """Run a parameterized SELECT and return rows as a list of dicts.
 
     Args are always passed separately from the SQL string ($1, $2, …) so values
-    can never be interpolated into the query — no SQL injection surface.
+    can never be interpolated into the query, so there is no SQL injection surface.
     """
     pool = await get_pool()
     async with pool.acquire() as conn:

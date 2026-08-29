@@ -51,7 +51,7 @@ def test_bad_token_is_rejected_with_401(headers):
 
 
 def test_empty_configured_token_disables_the_gate():
-    """An unset MCP_BEARER_TOKEN means no gate — documented behaviour, so it is
-    pinned by a test rather than left to be discovered in production."""
+    """An unset MCP_BEARER_TOKEN means no gate. That is documented behaviour, so it
+    is pinned by a test rather than left to be discovered in production."""
     r = _client(token="").get("/mcp")
     assert r.status_code == 200

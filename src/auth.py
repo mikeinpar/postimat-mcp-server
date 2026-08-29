@@ -6,10 +6,10 @@ a single admin token before letting a request reach the MCP app.
 
 ── Why one shared token is the RIGHT model here ──────────────────────────────
 This MCP server is an ADMIN / operator tool for the service owner, not a
-per-customer feature. There is exactly one caller — the admin — who is allowed to
+per-customer feature. There is exactly one caller, the admin, who is allowed to
 read across all channels, so a single admin secret is the correct gate, not a
 stand-in for user identity. (A per-customer product would instead need per-user
-tokens whose identity scopes every query — a different design entirely.)
+tokens whose identity scopes every query, a different design entirely.)
 In production, harden this admin token with OAuth for the operator, an IP
 allowlist, and rotation; the check itself stays the same shape.
 """

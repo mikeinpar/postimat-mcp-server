@@ -1,11 +1,11 @@
-"""Business logic — all SQL and all input parsing live here.
+"""Business logic: all SQL and all input parsing live here.
 
 This module knows nothing about MCP. It takes plain Python arguments and returns
 plain Python data. server.py wraps these functions as tools; you could just as
 easily call them from a REST handler or a CLI. That separation is the whole point
 of the "thin protocol layer" design.
 
-This server is an ADMIN / operator tool for the service owner — it reads across
+This server is an ADMIN / operator tool for the service owner. It reads across
 ALL channels of every client. There is no per-user scoping (that would be a
 separate per-customer product with per-user identity). Access is gated by a
 single admin token in the transport layer (see auth.py).
@@ -46,7 +46,7 @@ _DEFAULT_INTERVAL = "7 days"
 def resolve_interval(period: str | None) -> str:
     """Turn a fuzzy period string into a safe Postgres interval literal.
 
-    Anything unrecognized falls back to the default window rather than erroring —
+    Anything unrecognized falls back to the default window rather than erroring:
     an agent should get *some* useful answer, not a stack trace.
     """
     if not period:
@@ -76,7 +76,7 @@ def _jsonable(rows: list[dict]) -> list[dict]:
 
 # ── Tool implementations ─────────────────────────────────────────────────────
 # Channels are addressed by numeric `channel_id`. The agent gets ids from
-# list_channels() and passes them to the other tools — nobody types a channel
+# list_channels() and passes them to the other tools. Nobody types a channel
 # name. `title` is a display field only.
 
 
@@ -99,7 +99,7 @@ async def list_channels() -> dict[str, Any]:
 async def get_channel_config(channel_id: int) -> dict[str, Any]:
     """A channel's publishing config: schedule, platform, gates, prompts, sources.
 
-    This is where the real scheduling model lives — `posting_hours` ('HH:MM' times
+    This is where the real scheduling model lives: `posting_hours` ('HH:MM' times
     of day) plus `timezone`, and whether the channel actually publishes right now
     (`status='approved' AND is_active`).
     """
@@ -131,8 +131,8 @@ async def get_channel_config(channel_id: int) -> dict[str, Any]:
 
 async def get_channel_summary(channel_id: int, period: str = "7d") -> dict[str, Any]:
     """Operational summary for a channel over `period`, mirroring the Digest job:
-    counts of SUCCESS / FAILED* / SKIPPED* plus a success rate. No audience reach —
-    the service doesn't collect it.
+    counts of SUCCESS / FAILED* / SKIPPED* plus a success rate. There is no audience
+    reach here, because the service doesn't collect it.
     """
     interval = resolve_interval(period)
 

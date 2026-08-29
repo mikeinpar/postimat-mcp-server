@@ -1,14 +1,14 @@
-"""MCP protocol layer — declares the tools and runs the HTTP transport.
+"""MCP protocol layer: declares the tools and runs the HTTP transport.
 
 This file is intentionally *thin*. Each function below is a one-liner that
 delegates to src/queries.py; its real job is to declare the tool's name, typed
 signature, and description so the MCP client can build a JSON schema and the
-model knows what to pass. All actual work — SQL, period parsing — lives in
+model knows what to pass. All actual work, SQL and period parsing, lives in
 queries.py. That is the "thin protocol layer, business logic separate" split.
 
 This is an ADMIN tool for the service operator: it reads the publication contour
 (channel config & schedule, the publish log, failures) across ALL channels. The
-agent lists channels first, then drills into one by `channel_id` — nobody types a
+agent lists channels first, then drills into one by `channel_id`. Nobody types a
 channel name. Access is gated by a single admin bearer token (see auth.py).
 
 Run it:  python -m src.server   (serves streamable HTTP at http://HOST:PORT/mcp)
@@ -25,7 +25,7 @@ from . import queries
 from .auth import BearerAuthMiddleware
 from .config import settings
 
-# stateless_http=True keeps each request self-contained — the simplest mode for
+# stateless_http=True keeps each request self-contained, the simplest mode for
 # remote HTTP clients. The tools are served at `/mcp`.
 mcp = FastMCP(
     "postimat",

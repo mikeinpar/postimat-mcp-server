@@ -1,6 +1,6 @@
 """Shared test fixtures.
 
-The DB-backed tests run against a Postgres loaded with schema.sql + seed.sql —
+The DB-backed tests run against a Postgres loaded with schema.sql + seed.sql,
 the same pair docker-compose uses, so `docker compose up` then `pytest` works
 with no extra setup. DATABASE_URL points at it (defaults to the compose values).
 

@@ -29,7 +29,7 @@ async def test_list_channels_shape():
 
 
 async def test_publishes_reflects_both_gates():
-    """`publishes` is approved AND active, not either one — the seed's disabled
+    """`publishes` is approved AND active, not either one. The seed's disabled
     channel is approved, so a broken gate would show up here."""
     channels = {c["id"]: c for c in (await queries.list_channels())["channels"]}
     off = channels[DISABLED_CHANNEL]

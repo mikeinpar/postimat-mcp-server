@@ -1,11 +1,11 @@
--- postimat-mcp-server — database schema
+-- postimat-mcp-server: database schema
 -- This mirrors the PUBLICATION contour of the real service (DB: content_saas),
 -- reconstructed from the workflows' SQL nodes. The bot/onboarding contour
--- (users, bot_sessions, *_log, ...) is intentionally out of scope — this demo is
+-- (users, bot_sessions, *_log, ...) is intentionally out of scope, because this demo is
 -- about reading publishing activity, not the messenger UX.
 --
 -- Scheduling model (important): there is NO table of "future posts". Each channel
--- carries a schedule as `posting_hours` — a list of 'HH:MM' times of day. A
+-- carries a schedule as `posting_hours`, a list of 'HH:MM' times of day. A
 -- dispatcher runs every minute and, for each active+approved channel whose current
 -- hour matches a slot in `posting_hours` and whose `last_publish_date_hour` slot
 -- isn't taken yet, kicks off a worker. `posts_queue` is the LOG of what that

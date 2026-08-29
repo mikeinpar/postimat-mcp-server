@@ -1,4 +1,4 @@
-"""Configuration — everything comes from the environment, nothing is hardcoded.
+"""Configuration: everything comes from the environment, nothing is hardcoded.
 
 Values are read once at import time into a small frozen `settings` object so the
 rest of the code never touches os.environ directly.

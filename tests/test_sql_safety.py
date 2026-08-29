@@ -1,7 +1,7 @@
 """Values reach Postgres as bound parameters, never as SQL text.
 
 Two layers are checked: `db.fetch` itself, and a tool called with hostile input.
-After each attempt the tables are still there — the point of the exercise.
+After each attempt the tables are still there, which is the point of the exercise.
 """
 import pytest
 

@@ -1,4 +1,4 @@
--- postimat-mcp-server — seed data (FAKE, but realistic)
+-- postimat-mcp-server: seed data (FAKE, but realistic)
 -- Publication-contour data only. Timestamps are relative to now() so the demo is
 -- always "alive": recent publish attempts, recent failures.
 -- Loaded automatically by docker-compose after schema.sql.
@@ -40,10 +40,10 @@ INSERT INTO sources (channel_id, user_id, source_url, last_processed_id) VALUES
     (3, 103, 'https://t.me/s/food_src',        78);
 
 -- ── posts_queue ──────────────────────────────────────────────────────────────
--- The outcome log. payload mirrors exactly what the workflow logs — the Build
+-- The outcome log. payload mirrors exactly what the workflow logs: the Build
 -- Payload item: final_text (post body), title, image_url/video_url, source_id,
 -- channel (source), etc. FAILED_PARSER carries {source_url, error}; FAILED_SEND
--- logs the item as-is (the status is the signal — no error field is captured).
+-- logs the item as-is (the status is the signal, no error field is captured).
 INSERT INTO posts_queue
     (id, channel_id, source_url, origin_post_id, published_post_id, status,
      payload, scheduled_time, created_at) VALUES
