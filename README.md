@@ -1,5 +1,7 @@
 # postimat-mcp-server
 
+[![tests](https://github.com/mikeinpar/postimat-mcp-server/actions/workflows/tests.yml/badge.svg)](https://github.com/mikeinpar/postimat-mcp-server/actions/workflows/tests.yml)
+
 An **MCP (Model Context Protocol) server** that exposes a small, read-only set of
 tools over the PostgreSQL database (`content_saas`) of a **neuro auto-posting
 service** — a system that parses source channels, generates posts with an LLM,
@@ -202,6 +204,35 @@ the log is always recent — the demo looks alive no matter when you clone it.
 
 ---
 
+## Tests
+
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+docker compose up -d db            # or point DATABASE_URL at your own Postgres
+pytest
+```
+
+The suite covers the three things this server actually promises:
+
+- **Tool contracts** ([`tests/test_tools.py`](tests/test_tools.py)) — each of the
+  five tools is called against the seeded database and checked for the keys a
+  client reads, the two publishing gates, and the arithmetic in the summary. A
+  channel_id that does not exist returns `found: false` rather than raising.
+- **SQL safety** ([`tests/test_sql_safety.py`](tests/test_sql_safety.py),
+  [`tests/test_periods.py`](tests/test_periods.py)) — a string carrying a quote
+  and a `DROP TABLE` comes back as data, an unparseable `period` falls back to
+  the default window, and the tables are still standing afterwards.
+- **Auth** ([`tests/test_auth.py`](tests/test_auth.py)) — a missing, malformed or
+  wrong bearer token gets a 401 and never reaches the app behind the middleware.
+
+The period and auth tests need no database. The DB-backed ones skip themselves,
+rather than fail, when `DATABASE_URL` points at nothing.
+
+CI runs the same commands on every push: see
+[`.github/workflows/tests.yml`](.github/workflows/tests.yml).
+
+---
+
 ## What's next
 
 Things I'd add to take this from demo to production:
@@ -230,6 +261,16 @@ postimat-mcp-server/
 ├── Dockerfile
 ├── schema.sql            # tables: channels, sources, posts_queue
 ├── seed.sql              # realistic fake data, relative to now()
+├── pytest.ini            # test config (asyncio mode, import path)
+├── requirements-dev.txt  # test dependencies
+├── .github/workflows/
+│   └── tests.yml         # CI: Postgres service, schema + seed, pytest
+├── tests/
+│   ├── conftest.py       # shared pool fixture, skips if no Postgres
+│   ├── test_tools.py     # response shape of all five tools
+│   ├── test_periods.py   # period parsing and its fallback
+│   ├── test_sql_safety.py# parameterization holds under hostile input
+│   └── test_auth.py      # bearer token: 401 vs pass-through
 └── src/
     ├── __init__.py
     ├── config.py         # loads env into a small settings object
